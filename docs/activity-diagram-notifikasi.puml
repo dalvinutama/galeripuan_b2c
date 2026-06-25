@@ -1,0 +1,69 @@
+@startuml
+start
+
+:Mendeteksi trigger notifikasi;
+
+if (Trigger notifikasi?) then (Registrasi User)
+  :Event Registered;
+  :SendWelcomeEmail listener;
+  :Kirim email WelcomeCustomerMail;
+
+elseif (Pembayaran Sukses) then
+  :Callback Midtrans capture/settlement;
+  :Update order -> processing, paid;
+  :Notif database ke customer
+   "Pembayaran Berhasil";
+  :Notif database ke semua admin
+   "Pesanan Baru Dibayar";
+
+elseif (Pembayaran Gagal) then
+  :Callback Midtrans expire/cancel/deny;
+  :Update order -> cancelled, failed;
+  :Notif database ke customer
+   "Pesanan Dibatalkan";
+  :Notif database ke semua admin
+   "Pesanan Gagal";
+
+elseif (Customer batalkan) then
+  :OrderController::cancel();
+  :Update order -> cancelled;
+  :Notif database ke semua admin;
+
+elseif (Admin kirim barang) then
+  :OrderUpdate::updateProgress();
+  :Update order -> delivered;
+  :Notif database ke customer
+   "Pesanan Dikirim";
+  if (Ada no resi?) then (ya)
+    :Kirim email ShippingTrackingMail;
+  endif
+
+elseif (Admin batalkan) then
+  :Update order -> cancelled;
+  :Notif database ke customer
+   "Pesanan Dibatalkan";
+
+elseif (Customer terima) then
+  :OrderController::complete();
+  :Update order -> completed;
+  :Notif database ke customer
+   "Pesanan Selesai";
+
+elseif (Promo Blast) then
+  :Admin submit PromoBlast form;
+  :dispatch SendPromoBlastJob;
+  :Job iterasi semua user;
+  :Kirim email PromoBlastMail;
+
+else (Harga turun via Observer)
+  :ProductObserver::updated();
+  :Cek sale_price turun;
+  :dispatch SendWishlistPriceDropEmail;
+  :Job iterasi wishlist;
+  :Kirim email WishlistPriceDropMail;
+
+endif
+
+:Proses notifikasi selesai;
+stop
+@enduml

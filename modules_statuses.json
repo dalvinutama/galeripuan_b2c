@@ -1,0 +1,6 @@
+{
+    "Shop": true,
+    "Product": true,
+    "Migration": true,
+    "AddLableColumnToAddresTable": true
+}

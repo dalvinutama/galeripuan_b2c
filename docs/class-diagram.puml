@@ -1,0 +1,215 @@
+@startuml
+' --- PENGATURAN TAMPILAN ---
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+hide circle
+
+skinparam nodesep 30
+skinparam ranksep 40
+
+skinparam class {
+    BackgroundColor #DDF2FD
+    BorderColor #164863
+    ArrowColor #333333
+    FontColor #000000
+}
+
+' --- CORE SYSTEM ---
+class User {
+    + uuid id
+    + string name
+    + string email
+    + login(email, password) : boolean
+    + register(data) : User
+    + perbaruiProfil(data) : boolean
+    + logout() : void
+}
+
+class Address {
+    + uuid id
+    + uuid user_id
+    + string label
+    + string first_name
+    + string last_name
+    + string phone
+    + string email
+    + string address1
+    + string address2
+    + string city
+    + string province
+    + integer postcode
+    + boolean is_primary
+    + jadikanUtama() : boolean
+}
+
+' --- PRODUCT CATALOG ---
+class Category {
+    + uuid id
+    + uuid parent_id
+    + string name
+    + string slug
+    + ambilProduk() : List~Product~
+}
+
+class Product {
+    + uuid id
+    + uuid user_id
+    + uuid parent_id
+    + string sku
+    + string type
+    + string name
+    + decimal price
+    + decimal sale_price
+    + string status
+    + string stock_status
+    + json attributes
+    + cekKetersediaanStok(int qty) : boolean
+    + ambilVarian() : List~Product~
+}
+
+class ProductInventory {
+    + uuid id
+    + uuid product_id
+    + integer qty
+    + kurangiStok(int amount) : boolean
+    + tambahStok(int amount) : boolean
+}
+
+class ProductImage {
+    + uuid id
+    + uuid product_id
+    + string name
+    + dapatkanUrlGambar() : string
+}
+
+' --- SHOPPING CART & WISHLIST ---
+class Cart {
+    + uuid id
+    + uuid user_id
+    + decimal grand_total
+    + string voucher_code
+    + tambahItem(Product, int qty) : CartItem
+    + hapusItem(int itemId) : boolean
+    + perbaruiKuantitas(int itemId, int qty) : void
+    + hitungTotalKeranjang() : void
+    + terapkanVoucher(string code) : boolean
+    + hapusVoucher() : void
+    + clearCart() : void
+}
+
+class CartItem {
+    + uuid id
+    + uuid cart_id
+    + uuid product_id
+    + integer qty
+    + json attributes
+    + perbaruiKuantitas(int qty) : void
+}
+
+class Wishlist {
+    + bigint id
+    + uuid user_id
+    + uuid product_id
+    + ubahStatusWishlist(int productId) : boolean
+}
+
+class Review {
+    + bigint id
+    + uuid user_id
+    + uuid product_id
+    + uuid order_id
+    + integer rating
+    + text comment
+    + string status
+    + simpanUlasan(data) : Review
+}
+
+' --- ORDERING SYSTEM ---
+class Order {
+    + uuid id
+    + uuid user_id
+    + string code
+    + string status
+    + string payment_status
+    + string shipping_courier
+    + string shipping_number
+    + decimal grand_total
+    + string voucher_code
+    + checkout(Cart) : Order
+    + prosesPembayaran(string token) : boolean
+    + perbaruiStatus(string status) : boolean
+    + batalkanPesanan() : boolean
+    + selesaikanPesanan() : boolean
+}
+
+class OrderItem {
+    + uuid id
+    + uuid order_id
+    + uuid product_id
+    + integer qty
+    + decimal base_price
+    + decimal sub_total
+    + json attributes
+    + hitungSubtotal() : decimal
+}
+
+class Payment {
+    + uuid id
+    + uuid order_id
+    + uuid user_id
+    + string payment_type
+    + string status
+    + decimal amount
+}
+
+class Voucher {
+    + uuid id
+    + string code
+    + string type
+    + decimal value
+    + decimal min_total
+    + boolean is_active
+    + boolean is_first_order_only
+    + integer min_order_count
+    + date expired_at
+    + cekValiditas(Cart) : boolean
+    + hitungDiskon(decimal baseTotal) : decimal
+}
+
+' --- RELATIONSHIP MAPPING ---
+
+' Relasi User
+User "1" -- "*" Address
+User "1" -- "*" Cart
+User "1" -- "*" Order
+User "1" -- "*" Review
+User "1" -- "*" Wishlist
+
+' Relasi Kategori (self-referencing)
+Category "1" -- "*" Category : parent_id
+Category "*" -- "*" Product : memiliki
+
+' Relasi Produk
+Product "1" -- "1" ProductInventory
+Product "1" -- "*" ProductImage
+Product "1" -- "*" Product : parent_id
+Product "1" -- "*" CartItem
+Product "1" -- "*" OrderItem
+Product "1" -- "*" Review
+Product "1" -- "*" Wishlist
+
+' Relasi Keranjang
+Cart "1" -- "*" CartItem
+
+' Relasi Pesanan
+Order "1" -- "*" OrderItem
+Order "1" -- "*" Payment
+
+' Relasi Review ke Order
+Review "*" -- "1" Order
+
+' Relasi Voucher
+Voucher "1" -- "*" Cart : voucher_code
+Voucher "1" -- "*" Order : voucher_code
+
+@enduml

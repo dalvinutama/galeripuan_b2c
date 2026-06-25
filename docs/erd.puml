@@ -1,0 +1,294 @@
+@startuml
+' --- PENGATURAN TAMPILAN ---
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam defaultFontStyle bold
+skinparam EntityBorderColor #164863
+skinparam EntityBackgroundColor #DDF2FD
+skinparam ArrowColor #333333
+skinparam FontColor #000000
+
+hide circle
+
+' --- ENTITAS ---
+
+entity "users" as users {
+  *id : uuid <<PK>>
+  --
+  name : varchar
+  email : varchar
+  password : varchar
+  email_verified_at : timestamp
+  remember_token : varchar
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_categories" as categories {
+  *id : uuid <<PK>>
+  --
+  parent_id : uuid <<FK>>
+  slug : varchar
+  name : varchar
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_products" as products {
+  *id : uuid <<PK>>
+  --
+  user_id : uuid <<FK>>
+  parent_id : uuid <<FK>>
+  sku : varchar
+  type : varchar
+  name : varchar
+  slug : varchar
+  price : decimal
+  sale_price : decimal
+  status : varchar
+  stock_status : varchar
+  manage_stock : boolean
+  weight : integer
+  publish_date : datetime
+  excerpt : text
+  body : text
+  metas : json
+  featured_image : varchar
+  views_count : bigint
+  attributes : json
+  deleted_at : timestamp
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_categories_products" as catprod {
+  *product_id : uuid <<FK>>
+  *category_id : uuid <<FK>>
+}
+
+entity "shop_product_inventories" as inventories {
+  *id : uuid <<PK>>
+  --
+  product_id : uuid <<FK>>
+  qty : integer
+  low_stock_threshold : integer
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_product_images" as images {
+  *id : uuid <<PK>>
+  --
+  product_id : uuid <<FK>>
+  name : varchar
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_addresses" as addresses {
+  *id : uuid <<PK>>
+  --
+  user_id : uuid <<FK>>
+  is_primary : boolean
+  label : varchar
+  first_name : varchar
+  last_name : varchar
+  address1 : varchar
+  address2 : varchar
+  phone : varchar
+  email : varchar
+  city : varchar
+  city_id : integer
+  province : varchar
+  province_id : integer
+  postcode : integer
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_carts" as carts {
+  *id : uuid <<PK>>
+  --
+  user_id : uuid <<FK>>
+  expired_at : datetime
+  base_total_price : decimal
+  total_weight : integer
+  tax_amount : decimal
+  tax_percent : decimal
+  discount_amount : decimal
+  discount_percent : decimal
+  grand_total : decimal
+  voucher_code : varchar
+  deleted_at : timestamp
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_cart_items" as cartitems {
+  *id : uuid <<PK>>
+  --
+  cart_id : uuid <<FK>>
+  product_id : uuid <<FK>>
+  qty : integer
+  attributes : json
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_orders" as orders {
+  *id : uuid <<PK>>
+  --
+  user_id : uuid <<FK>>
+  code : varchar
+  status : varchar
+  payment_status : varchar
+  shipping_courier : varchar
+  shipping_service_name : varchar
+  shipping_number : varchar
+  approved_by : uuid <<FK>>
+  approved_at : datetime
+  cancelled_by : uuid <<FK>>
+  cancelled_at : datetime
+  cancellation_note : text
+  order_date : datetime
+  payment_due : datetime
+  base_total_price : decimal
+  tax_amount : decimal
+  tax_percent : decimal
+  discount_amount : decimal
+  discount_percent : decimal
+  shipping_cost : decimal
+  grand_total : decimal
+  voucher_code : varchar
+  customer_note : text
+  customer_first_name : varchar
+  customer_last_name : varchar
+  customer_address1 : varchar
+  customer_address2 : varchar
+  customer_phone : varchar
+  customer_email : varchar
+  customer_city : varchar
+  customer_province : varchar
+  customer_postcode : integer
+  deleted_at : timestamp
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_order_items" as orderitems {
+  *id : uuid <<PK>>
+  --
+  order_id : uuid <<FK>>
+  product_id : uuid <<FK>>
+  qty : integer
+  base_price : decimal
+  base_total : decimal
+  tax_amount : decimal
+  tax_percent : decimal
+  discount_amount : decimal
+  discount_percent : decimal
+  sub_total : decimal
+  sku : varchar
+  type : varchar
+  name : varchar
+  attributes : json
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_payments" as payments {
+  *id : uuid <<PK>>
+  --
+  user_id : uuid <<FK>>
+  order_id : uuid <<FK>>
+  payment_type : varchar
+  status : varchar
+  approved_by : uuid
+  approved_at : datetime
+  note : text
+  rejected_by : uuid
+  rejected_at : datetime
+  rejection_note : text
+  amount : decimal
+  payloads : json
+  deleted_at : timestamp
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_vouchers" as vouchers {
+  *id : uuid <<PK>>
+  --
+  code : varchar
+  description : varchar
+  type : enum
+  value : decimal
+  min_total : decimal
+  is_first_order_only : boolean
+  min_order_count : integer
+  is_active : boolean
+  expired_at : date
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_wishlists" as wishlists {
+  *id : bigint <<PK>>
+  --
+  user_id : char(36) <<FK>>
+  product_id : char(36) <<FK>>
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "shop_reviews" as reviews {
+  *id : bigint <<PK>>
+  --
+  user_id : char(36) <<FK>>
+  product_id : char(36) <<FK>>
+  order_id : char(36) <<FK>>
+  rating : tinyint
+  comment : text
+  status : varchar
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+' --- RELASI ---
+
+' Relasi User
+users ||--o{ addresses : memiliki
+users ||--o{ carts : memiliki
+users ||--o{ orders : memesan
+users ||--o{ payments : membayar
+users ||--o{ reviews : memberi
+users ||--o{ wishlists : menyimpan
+users ||--o{ products : mengelola
+
+' Relasi Kategori
+categories ||--o{ categories : parent_id
+categories ||--o{ catprod : memiliki
+products ||--o{ catprod : termasuk
+
+' Relasi Produk
+products ||--|| inventories : mempunyai
+products ||--o{ images : mempunyai
+products ||--o{ products : parent_id
+products ||--o{ cartitems : dibeli
+products ||--o{ orderitems : tercatat
+products ||--o{ reviews : diulas
+products ||--o{ wishlists : difavoritkan
+
+' Relasi Keranjang
+carts ||--o{ cartitems : berisi
+
+' Relasi Pesanan
+orders ||--o{ orderitems : berisi
+orders ||--o{ payments : dibayar
+orders ||--o{ reviews : diulas
+
+' Relasi Voucher
+vouchers ||--o{ carts : digunakan
+vouchers ||--o{ orders : digunakan
+
+@enduml

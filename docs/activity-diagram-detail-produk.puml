@@ -1,0 +1,75 @@
+@startuml
+|Pengguna|
+start
+: Membuka URL produk
+  (/kategori/slug-sku);
+|Sistem|
+: Mencocokkan route
+  ProductController@show;
+: Mencari produk berdasarkan
+  CONCAT(slug, '-', sku);
+
+if (Produk ditemukan?) then (ya)
+  : Increment views_count;
+  : Memuat data produk;
+else (tidak)
+  : Tampilkan halaman 404;
+  stop
+endif
+
+: Memuat view
+  products.show;
+
+|Pengguna|
+: Melihat halaman detail produk;
+
+|Sistem|
+fork
+  : Menampilkan gambar produk
+    (carousel);
+fork again
+  : Menampilkan info produk
+    (nama, harga, SKU, stok);
+fork again
+  : Menampilkan rating &
+    ulasan produk;
+fork again
+  : Cek status wishlist
+    (jika login);
+fork again
+  : Cek diskon & label
+    sale_price;
+endfork
+
+|Pengguna|
+: Mengisi quantity;
+
+if (Ingin chat admin?) then (ya)
+  : Klik tombol Chat;
+  |Sistem|
+  : Dispatch event Livewire
+    buka-chat;
+  |Pengguna|
+  : Berkirim pesan dengan admin;
+endif
+
+if (Ingin tambah ke wishlist?) then (ya)
+  : Klik tombol wishlist;
+  |Sistem|
+  : Simpan wishlist;
+endif
+
+if (Ingin beli?) then (ya)
+  : Klik "Tambah ke Keranjang";
+  |Sistem|
+  : Validasi & simpan
+    ke cart;
+  : Redirect ke halaman
+    keranjang;
+else (tidak)
+  : Lanjut browsing;
+  stop
+endif
+
+stop
+@enduml

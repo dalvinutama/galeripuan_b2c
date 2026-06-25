@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arsitektur Web Gallery Puan.id</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  body {
+    background: #fff;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
+  .diagram-container {
+    max-width: 100%;
+    overflow: auto;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #333;
+  }
+  .keterangan {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .keterangan table {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  .keterangan td {
+    padding: 2px 12px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 11px;
+  }
+  .keterangan td:first-child {
+    font-weight: bold;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+<div class="title">Gambar Arsitektur Web Gallery Puan.id</div>
+<div class="diagram-container">
+<div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {
+  'lineColor': '#555',
+  'primaryColor': '#E8F0FE',
+  'primaryBorderColor': '#4A90D9',
+  'primaryTextColor': '#222',
+  'secondaryColor': '#FFF3E0',
+  'secondaryBorderColor': '#E65100',
+  'tertiaryColor': '#E8F5E9',
+  'tertiaryBorderColor': '#2E7D32',
+  'quadColor': '#FCE4EC',
+  'quadBorderColor': '#C62828',
+  'clusterBkg': '#FAFAFA',
+  'clusterBorder': '#BDBDBD'
+}}}%%
+graph TB
+    classDef client fill:#E3F2FD,stroke:#1565C0,stroke-width:2,color:#0D47A1
+    classDef web fill:#FFF3E0,stroke:#E65100,stroke-width:2,color:#BF360C
+    classDef livewire fill:#FFF8E1,stroke:#F9A825,stroke-width:2,color:#F57F17
+    classDef app fill:#E8F5E9,stroke:#2E7D32,stroke-width:2,color:#1B5E20
+    classDef data fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2,color:#4A148C
+    classDef ext fill:#FCE4EC,stroke:#C62828,stroke-width:2,color:#B71C1C
+
+    subgraph CL["🚀 CLIENT / BROWSER"]
+        C_Consumer["👤 Consumer Browser<br/>Desktop / Mobile"]
+        C_Admin["🛡️ Admin Browser<br/>Desktop"]
+    end
+
+    subgraph WEB["🌐 WEB SERVER (Laravel 10 + Livewire 4)"]
+        MW["Middleware Stack<br/>web | auth | auth:admin"]
+        
+        subgraph PRES["📄 Presentation Layer"]
+            BV_Theme["Blade Theme Views<br/>gallerypuan/layouts<br/>home, products, carts<br/>orders, profile, about"]
+            BV_Auth["Blade Auth Views<br/>login, register, reset<br/>(Laravel UI)"]
+            LW_Consumer["Livewire Front<br/>Chat Widget"]
+            LW_Admin["Livewire Admin<br/>Dashboard, Product, Order<br/>Category, Customer, Voucher<br/>Marketing, Report, Setting<br/>Chat, Notification, Profile"]
+            BV_Admin["Blade Admin Layout"]
+        end
+
+        subgraph APP["⚙️ Application Layer"]
+            Controllers["Controllers<br/>HomeController<br/>ProductController<br/>CartController<br/>OrderController<br/>ProfileController"]
+            Repos["Repositories<br/>CartRepository<br/>ProductRepository<br/>CategoryRepository<br/>AddressRepository"]
+            Jobs["Jobs<br/>SendPromoBlastJob<br/>SendWishlistPriceDropJob<br/>DailyAdminNotifications"]
+            Notif["Notifications<br/>AdminNotification<br/>OrderStatusNotification"]
+            Mail["Mailables<br/>WelcomeCustomerMail<br/>PromoBlastMail<br/>ShippingTrackingMail<br/>WishlistPriceDropMail"]
+            Observers["Observers<br/>ProductObserver"]
+            Events["Listeners<br/>SendWelcomeEmail"]
+        end
+    end
+
+    subgraph DATA["🗄️ DATA LAYER"]
+        DB("MySQL Database<br/>gallery-puandb")
+        DB_Core["Core Tables<br/>users, admins, settings<br/>conversations, messages<br/>media, notifications"]
+        DB_Shop["Shop Module Tables<br/>shop_products, shop_orders<br/>shop_order_items, shop_carts<br/>shop_cart_items, shop_categories<br/>shop_vouchers, shop_wishlists<br/>shop_reviews, shop_payments<br/>shop_addresses<br/>shop_product_inventories<br/>shop_product_images"]
+        FS["File Storage<br/>Product Images<br/>Site Images (logo, favicon, hero)<br/>Media Library (Spatie)"]
+    end
+
+    subgraph EXT["🔗 INTEGRASI / EXTERNAL SERVICES"]
+        Midtrans["Midtrans Snap<br/>Payment Gateway<br/>~ Sandbox Mode ~"]
+        Komerce["Komerce API<br/>(RajaOngkir)<br/>Shipping Cost Calculator<br/>Province / City Data"]
+        SMTP["SMTP Gmail<br/>Email Service"]
+    end
+
+    C_Consumer -->|HTTP Request| MW
+    C_Admin -->|HTTP Request| MW
+    MW --> BV_Theme
+    MW --> BV_Auth
+    MW --> BV_Admin
+    MW --> LW_Consumer
+    MW --> LW_Admin
+    MW --> Controllers
+
+    Controllers -->|menggunakan| Repos
+    Controllers -->|mengirim| Jobs
+    Controllers -->|mengirim| Notif
+    Controllers -->|memanggil| Midtrans
+    Controllers -->|memanggil| Komerce
+
+    Repos -->|CRUD| DB
+    Observers -->|trigger| Jobs
+    Events -->|memanggil| Mail
+
+    Jobs -->|mengirim| SMTP
+    Mail -->|mengirim| SMTP
+    Notif -->|menyimpan ke| DB
+
+    LW_Admin -->|dispatch| Jobs
+    LW_Admin -->|dispatch| Notif
+    LW_Consumer -->|dispatch| Notif
+
+    DB --> DB_Core
+    DB --> DB_Shop
+    Controllers -->|baca/tulis| FS
+
+    class C_Consumer,C_Admin client
+    class MW,BV_Theme,BV_Auth,BV_Admin web
+    class LW_Consumer,LW_Admin livewire
+    class Controllers,Repos,Jobs,Notif,Mail,Observers,Events app
+    class DB,DB_Core,DB_Shop,FS data
+    class Midtrans,Komerce,SMTP ext
+</div>
+</div>
+
+<div class="keterangan">
+<table>
+  <tr><td style="background:#E3F2FD;border-color:#1565C0;">Client Layer</td><td>Browser pengguna (konsumen & admin)</td></tr>
+  <tr><td style="background:#FFF3E0;border-color:#E65100;">Presentation Layer</td><td>Blade templates, Livewire components, Middleware</td></tr>
+  <tr><td style="background:#E8F5E9;border-color:#2E7D32;">Application Layer</td><td>Controllers, Repositories, Jobs, Notifications, Mailables, Observers</td></tr>
+  <tr><td style="background:#F3E5F5;border-color:#6A1B9A;">Data Layer</td><td>MySQL database + File Storage (Spatie Media Library)</td></tr>
+  <tr><td style="background:#FCE4EC;border-color:#C62828;">Integration Layer</td><td>Midtrans Snap, Komerce API (RajaOngkir), SMTP Gmail</td></tr>
+</table>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      lineColor: '#555',
+      primaryColor: '#E8F0FE',
+      primaryBorderColor: '#4A90D9',
+      primaryTextColor: '#222',
+      secondaryColor: '#FFF3E0',
+      secondaryBorderColor: '#E65100',
+      tertiaryColor: '#E8F5E9',
+      tertiaryBorderColor: '#2E7D32',
+      quadColor: '#FCE4EC',
+      quadBorderColor: '#C62828',
+      clusterBkg: '#FAFAFA',
+      clusterBorder: '#BDBDBD'
+    },
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: 'basis'
+    }
+  });
+</script>
+</body>
+</html>

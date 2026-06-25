@@ -1,0 +1,88 @@
+@startuml
+|Admin|
+start
+: Membuka halaman
+  Pengaturan Website;
+|Sistem|
+: Memuat data settings
+  dari database (cache);
+
+if (Cache tersedia?) then (ya)
+  : Gunakan nilai dari cache;
+else (tidak)
+  : Query ke tabel settings;
+  : Simpan ke cache;
+endif
+
+: Tampilkan form
+  (5 bagian);
+
+|Admin|
+: Mengisi / mengubah
+  konten homepage;
+: Pilih bagian yang
+  akan diedit;
+
+|Sistem|
+: Menampilkan form sesuai
+  bagian yang dipilih;
+
+|Admin|
+if (Update teks?) then (ya)
+  : Mengisi field teks
+    (title, subtitle, dll);
+else
+endif
+
+if (Update gambar?) then (ya)
+  : Upload file gambar baru
+    ATAU pilih dari history;
+else
+endif
+
+: Klik tombol Simpan;
+
+|Sistem|
+
+if (Tipe field?) then (teks)
+  : Setting::setValue(key, value);
+  : updateOrCreate ke tabel
+    settings;
+  : Hapus cache setting_key;
+else (gambar)
+  : Simpan file ke
+    storage/app/public/settings/;
+  : Setting::setValue dengan
+    path gambar;
+  : Catat ke tabel
+    setting_images (history);
+  : Hapus cache setting_key;
+endif
+
+: Tampilkan pesan
+  sukses;
+
+|Pengunjung|
+: Membuka halaman
+  website;
+
+|Sistem|
+: Setting::getValue(key);
+if (Cache tersedia?) then (ya)
+  : Gunakan cache;
+else (tidak)
+  : Query database;
+  : Simpan ke cache;
+endif
+
+: Render konten di Blade:
+  - Hero banner (title, subtitle, image)
+  - Bagian promo (badge, title, desc, image)
+  - Bagian about (story, gallery)
+  - Logo & favicon;
+
+|Pengunjung|
+: Melihat konten
+  homepage terbaru;
+stop
+@enduml
