@@ -25,6 +25,8 @@ services:
       - DB_PASSWORD=secret
       - SESSION_DRIVER=database
       - CACHE_DRIVER=database
+    volumes:
+      - app_storage:/var/www/html/storage
 
   db:
     image: mysql:8.0
@@ -37,3 +39,4 @@ services:
 
 volumes:
   db_data:
+  app_storage:
