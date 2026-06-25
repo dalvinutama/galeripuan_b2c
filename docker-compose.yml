@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - db
+    # Jika menggunakan Coolify, hapus atau sesuaikan ports di bawah ini jika Coolify yang menangani routing
+    # ports:
+    #   - "80:80"
+    environment:
+      - APP_NAME="Gallery Puan"
+      - APP_ENV=production
+      - APP_KEY=base64:0wRobfybOMY+zXgA3fEOZNCATJiMNpDSnS/woq/B9tE=
+      - APP_DEBUG=true
+      - APP_URL=https://gallerypuanid.my.id
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=gallery_puan
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      - SESSION_DRIVER=database
+      - CACHE_DRIVER=database
+    volumes:
+      - app_storage:/var/www/html/storage
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: gallery_puan
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+  app_storage:
