@@ -20,6 +20,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
+# Instal Node.js dan NPM (Dibutuhkan untuk Vite build)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
 # Aktifkan mod_rewrite Apache untuk URL Laravel
 RUN a2enmod rewrite
 
@@ -39,6 +43,9 @@ COPY . .
 
 # Instal dependensi PHP (abaikan platform reqs jika ada konflik lokal)
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+
+# Instal dependensi Node.js dan build Vite assets
+RUN npm install && npm run build
 
 # Atur permission untuk folder storage dan bootstrap cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
