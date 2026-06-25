@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     libonig-dev \
     libxml2-dev \
-    libzip-dev
+    libzip-dev \
+    default-mysql-client
 
 # Bersihkan cache apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
