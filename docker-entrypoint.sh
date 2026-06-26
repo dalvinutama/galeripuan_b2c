@@ -3,20 +3,24 @@ set -e
 
 echo "==> Running Laravel post-start setup..."
 
-# Tunggu database siap menggunakan mysqladmin ping
-echo "==> Waiting for database connection..."
-MAX_TRIES=30
+DB_HOST_VAL="${DB_HOST:-db}"
+DB_PORT_VAL="${DB_PORT:-3306}"
+
+# Tunggu database siap menggunakan TCP port check (lebih reliable)
+echo "==> Waiting for database at ${DB_HOST_VAL}:${DB_PORT_VAL}..."
+MAX_TRIES=40
 COUNT=0
-until mysqladmin ping -h"${DB_HOST:-db}" -P"${DB_PORT:-3306}" -u"${DB_USERNAME:-root}" -p"${DB_PASSWORD:-secret}" --silent 2>/dev/null; do
+until (echo > /dev/tcp/${DB_HOST_VAL}/${DB_PORT_VAL}) 2>/dev/null; do
     COUNT=$((COUNT + 1))
     if [ $COUNT -ge $MAX_TRIES ]; then
-        echo "==> ERROR: Could not connect to database after ${MAX_TRIES} attempts. Exiting."
+        echo "==> ERROR: Could not connect to database after ${MAX_TRIES} attempts."
         exit 1
     fi
-    echo "    DB not ready yet (attempt ${COUNT}/${MAX_TRIES}), retrying in 2s..."
-    sleep 2
+    echo "    DB not ready yet (attempt ${COUNT}/${MAX_TRIES}), retrying in 3s..."
+    sleep 3
 done
-echo "==> Database is ready!"
+echo "==> Database port is open! Waiting 2s for MySQL to be fully ready..."
+sleep 2
 
 # Storage symlink
 echo "==> Creating storage symlink..."
