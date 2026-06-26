@@ -15,6 +15,7 @@ services:
       - APP_KEY
       - APP_DEBUG
       - APP_URL
+      - ALLOWED_HOSTS
       - APP_THEME
       - DB_CONNECTION
       - DB_HOST

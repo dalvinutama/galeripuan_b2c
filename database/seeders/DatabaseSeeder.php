@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
             SettingSeeder::class,
-            \Modules\Shop\Database\Seeders\ShopDatabaseSeeder::class,
+            // \Modules\Shop\Database\Seeders\ShopDatabaseSeeder::class,
+            CoolifyDataSeeder::class,
         ]);
     }
 }

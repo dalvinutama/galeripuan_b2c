@@ -13,12 +13,12 @@ Pastikan seluruh perubahan terbaru pada project ini sudah di-commit dan di-push 
 5. Pilih penyedia Git Anda (misal: **GitHub** - mendukung *Public* maupun *Private* repository).
 6. Pilih repository `gallery-puan` dan branch utama (biasanya `main` atau `master`).
 
-## 3. Konfigurasi Build (Nixpacks)
-Coolify menggunakan **Nixpacks** sebagai default build pack. Nixpacks sangat pintar dalam mendeteksi aplikasi Laravel dan Node.js (untuk Vite).
+## 3. Konfigurasi Build (Docker Compose)
+Coolify mendukung deployment menggunakan **Docker Compose** yang akan membaca file `docker-compose.yml` dan `Dockerfile` di dalam repositori ini.
 
-1. Pada bagian **Build Pack**, biarkan tetap **Nixpacks**.
-2. **Ports**: Nixpacks akan otomatis mengatur Nginx dan PHP-FPM. Biarkan port diatur ke `80`.
-3. Proses `composer install`, `npm install`, dan `npm run build` (Vite) akan berjalan secara otomatis saat proses build.
+1. Pada bagian **Build Pack**, ubah dari Nixpacks (jika default) menjadi **Docker Compose**.
+2. Pastikan field **Docker Compose File Location** menunjuk ke `/docker-compose.yml`.
+3. Coolify akan secara otomatis mem-build image menggunakan `Dockerfile` yang telah disediakan dan menjalankan container `app` serta `db` (MySQL). Proses instalasi library (`composer install`, `npm run build`) sudah ditangani di dalam Dockerfile.
 
 ## 4. Konfigurasi Environment Variables (.env)
 Anda tidak perlu mengupload file `.env`. Sebagai gantinya, atur variabel di dashboard. Masuk ke tab **Environment Variables** pada aplikasi Anda di Coolify dan tambahkan variabel-variabel penting ini (ubah nilainya sesuai dengan environment VPS Anda):
@@ -28,15 +28,16 @@ APP_NAME="Gallery Puan"
 APP_ENV=production
 APP_KEY="base64:...." # Masukkan APP_KEY dari local Anda, atau jalankan php artisan key:generate di local dan copy hasilnya
 APP_DEBUG=false
-APP_URL=https://domain-anda.com
+APP_URL=https://gallerypuanid.my.id
+ALLOWED_HOSTS=gallerypuanid.my.id
 
-# Konfigurasi Database (Jika menggunakan database internal Coolify, sesuaikan host dan port)
+# Konfigurasi Database (Sudah terhubung otomatis via docker-compose)
 DB_CONNECTION=mysql
-DB_HOST= # Host database, misal nama service database di Coolify
+DB_HOST=db
 DB_PORT=3306
 DB_DATABASE=gallery_puan
 DB_USERNAME=root
-DB_PASSWORD=password_database_anda
+DB_PASSWORD=secret
 
 # Konfigurasi SMTP (Untuk email After-Sales, Forgot Password, dll)
 MAIL_MAILER=smtp
@@ -60,20 +61,20 @@ SESSION_DRIVER=database # atau file
 CACHE_DRIVER=database # atau file
 ```
 
-## 5. Post-Deployment (Migrasi Database & Cache)
-Untuk aplikasi Laravel, sangat disarankan untuk menjalankan migrasi dan meng-cache konfigurasi setiap kali melakukan deployment.
+## 5. Post-Deployment (Otomatis)
+Aplikasi ini sudah menggunakan `docker-entrypoint.sh` yang secara otomatis akan:
+- Menunggu database MySQL siap.
+- Menjalankan migrasi database (`php artisan migrate --force`).
+- Menjalankan seeder (`php artisan db:seed --force`) yang berisi **data persis dengan database lokal Anda**.
+- Membuat symlink storage.
+- Melakukan cache config, route, dan view.
 
-1. Di menu aplikasi Coolify, cari bagian **Post Deployment Command** (atau *Start Command* tambahan).
-2. Masukkan perintah berikut:
-   ```bash
-   php artisan migrate --force && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache
-   ```
-   *Perintah ini akan memastikan tabel terbuat/terupdate dan aplikasi berjalan lebih cepat.*
+Anda tidak perlu menjalankan perintah post-deployment manual di Coolify.
 
 ## 6. Setup Domain dan SSL
 1. Masuk ke tab **Settings** pada aplikasi di Coolify.
-2. Di bagian **Domains**, masukkan domain atau subdomain Anda (contoh: `https://gallery-puan.com`).
-3. **Penting**: Pastikan Anda sudah mengarahkan **A Record** pada pengaturan DNS domain Anda ke IP VPS Coolify Anda.
+2. Di bagian **Domains**, masukkan domain Anda: `https://gallerypuanid.my.id`.
+3. **Penting**: Pastikan Anda sudah mengarahkan **A Record** pada pengaturan DNS domain `gallerypuanid.my.id` ke IP VPS Coolify Anda.
 4. Coolify secara otomatis akan menerbitkan dan memperbarui sertifikat SSL (HTTPS) dari Let's Encrypt.
 
 ## 7. Deploy Aplikasi

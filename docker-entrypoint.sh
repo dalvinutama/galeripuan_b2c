@@ -48,7 +48,14 @@ else
     php artisan migrate --force
 fi
 
-# Buat tabel cache jika CACHE_DRIVER=database dan tabel belum ada
+# Buat tabel sessions jika SESSION_DRIVER=database
+if [ "${SESSION_DRIVER}" = "database" ]; then
+    echo "==> Ensuring sessions table exists..."
+    php artisan session:table 2>/dev/null || true
+    php artisan migrate --force
+fi
+
+# Buat tabel cache jika CACHE_DRIVER=database
 if [ "${CACHE_DRIVER}" = "database" ]; then
     echo "==> Ensuring cache table exists..."
     php artisan cache:table 2>/dev/null || true
