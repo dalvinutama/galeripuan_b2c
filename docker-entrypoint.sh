@@ -48,6 +48,13 @@ else
     php artisan migrate --force
 fi
 
+# Buat tabel cache jika CACHE_DRIVER=database dan tabel belum ada
+if [ "${CACHE_DRIVER}" = "database" ]; then
+    echo "==> Ensuring cache table exists..."
+    php artisan cache:table 2>/dev/null || true
+    php artisan migrate --force
+fi
+
 # Storage symlink
 echo "==> Creating storage symlink..."
 php artisan storage:link --force 2>/dev/null
