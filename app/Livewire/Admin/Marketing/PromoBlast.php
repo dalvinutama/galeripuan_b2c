@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PromoBlastMail;
-use Modules\Shop\Entities\voucher;
+use Modules\Shop\Entities\Voucher;
 
 class PromoBlast extends Component
 {

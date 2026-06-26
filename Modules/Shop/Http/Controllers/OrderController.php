@@ -72,7 +72,7 @@ class OrderController extends Controller
                         ->whereNotIn('status', ['cancelled', 'failed']) 
                         ->count();
 
-        $availablevouchers = \Modules\Shop\Entities\voucher::where('is_active', true)
+        $availablevouchers = \Modules\Shop\Entities\Voucher::where('is_active', true)
             ->where('expired_at', '>=', now())
             ->get();
 
