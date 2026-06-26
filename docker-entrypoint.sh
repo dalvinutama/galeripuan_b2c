@@ -22,27 +22,39 @@ done
 echo "==> Database port is open! Waiting 2s for MySQL to be fully ready..."
 sleep 2
 
-# Storage symlink
-echo "==> Creating storage symlink..."
-php artisan storage:link --force 2>/dev/null || true
+# Cek apakah database kosong (cek tabel migrations)
+echo "==> Checking if database is empty..."
+DB_HOST_VAL="${DB_HOST:-db}"
+DB_PORT_VAL="${DB_PORT:-3306}"
+DB_USER_VAL="${DB_USERNAME:-root}"
+DB_PASS_VAL="${DB_PASSWORD:-secret}"
+DB_NAME_VAL="${DB_DATABASE:-gallery_puan}"
 
-# Buat migration tabel sessions jika belum ada
-echo "==> Ensuring sessions table migration exists..."
+TABLE_COUNT=$(mysql -h "$DB_HOST_VAL" -P "$DB_PORT_VAL" -u "$DB_USER_VAL" -p"$DB_PASS_VAL" -e "SELECT count(*) FROM information_schema.tables WHERE table_schema = '$DB_NAME_VAL';" -N 2>/dev/null || echo 0)
+
+if [ "$TABLE_COUNT" -eq 0 ]; then
+    echo "==> Database is empty. Importing database_export.sql to perfectly match local data..."
+    if [ -f /var/www/html/database_export.sql ]; then
+        mysql -h "$DB_HOST_VAL" -P "$DB_PORT_VAL" -u "$DB_USER_VAL" -p"$DB_PASS_VAL" "$DB_NAME_VAL" < /var/www/html/database_export.sql
+        echo "==> Import complete!"
+    else
+        echo "==> WARNING: database_export.sql not found!"
+    fi
+else
+    echo "==> Database already contains data (${TABLE_COUNT} tables). Skipping import."
+fi
+
+# Pastikan migration cache & sessions table ada (jika belum terbuat dari SQL)
+php artisan cache:table 2>/dev/null || true
 php artisan session:table 2>/dev/null || true
 
-# Jalankan migrasi
+# Jalankan migrasi jika ada yang tertinggal
 echo "==> Running migrations..."
 php artisan migrate --force
 
-# Seed data awal jika database masih kosong (tidak ada admin)
-echo "==> Checking if initial seeding is needed..."
-ADMIN_COUNT=$(php artisan tinker --execute="echo \App\Models\Admin::count();" 2>/dev/null | tail -1 | tr -d '[:space:]')
-if [ "$ADMIN_COUNT" = "0" ] || [ -z "$ADMIN_COUNT" ]; then
-    echo "==> No admin found, running database seeder..."
-    php artisan db:seed --force
-else
-    echo "==> Admin exists (${ADMIN_COUNT}), skipping seeder."
-fi
+# Storage symlink
+echo "==> Creating storage symlink..."
+php artisan storage:link --force 2>/dev/null || true
 
 # Optimize cache
 echo "==> Caching config, routes, and views..."
