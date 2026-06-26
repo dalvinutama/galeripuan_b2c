@@ -30,12 +30,12 @@ DB_USER_VAL="${DB_USERNAME:-root}"
 DB_PASS_VAL="${DB_PASSWORD:-secret}"
 DB_NAME_VAL="${DB_DATABASE:-gallery_puan}"
 
-TABLE_COUNT=$(mysql -h "$DB_HOST_VAL" -P "$DB_PORT_VAL" -u "$DB_USER_VAL" -p"$DB_PASS_VAL" -e "SELECT count(*) FROM information_schema.tables WHERE table_schema = '$DB_NAME_VAL';" -N 2>/dev/null || echo 0)
+TABLE_COUNT=$(mysql --ssl-mode=DISABLED -h "$DB_HOST_VAL" -P "$DB_PORT_VAL" -u "$DB_USER_VAL" -p"$DB_PASS_VAL" -e "SELECT count(*) FROM information_schema.tables WHERE table_schema = '$DB_NAME_VAL';" -N 2>/dev/null || echo 0)
 
 if [ "$TABLE_COUNT" -eq 0 ]; then
     echo "==> Database is empty. Importing database_export.sql to perfectly match local data..."
     if [ -f /var/www/html/database_export.sql ]; then
-        mysql -h "$DB_HOST_VAL" -P "$DB_PORT_VAL" -u "$DB_USER_VAL" -p"$DB_PASS_VAL" "$DB_NAME_VAL" < /var/www/html/database_export.sql
+        mysql --ssl-mode=DISABLED -h "$DB_HOST_VAL" -P "$DB_PORT_VAL" -u "$DB_USER_VAL" -p"$DB_PASS_VAL" "$DB_NAME_VAL" < /var/www/html/database_export.sql
         echo "==> Import complete!"
     else
         echo "==> WARNING: database_export.sql not found!"
