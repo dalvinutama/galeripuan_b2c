@@ -21,10 +21,10 @@
     @livewireStyles
     <!-- CSS files -->
     @vite([
-        'resources/views/livewire/admin/assets/css/tabler.min.css?1692870487',
-        'resources/views/livewire/admin/assets/css/tabler-flags.min.css?1692870487',
-        'resources/views/livewire/admin/assets/css/tabler-payments.min.css?1692870487',
-        'resources/views/livewire/admin/assets/css/tabler-vendors.min.css?1692870487',
+        'resources/views/livewire/admin/assets/css/tabler.min.css',
+        'resources/views/livewire/admin/assets/css/tabler-flags.min.css',
+        'resources/views/livewire/admin/assets/css/tabler-payments.min.css',
+        'resources/views/livewire/admin/assets/css/tabler-vendors.min.css',
     ])
     <style>
         @import url('https://rsms.me/inter/inter.css');
@@ -53,7 +53,7 @@
     </div>
     <!-- Libs JS -->
     @vite([
-        'resources/views/livewire/admin/assets/js/demo-theme.min.js?1692870487',
+        'resources/views/livewire/admin/assets/js/demo-theme.min.js',
         'resources/views/livewire/admin/assets/libs/apexcharts/dist/apexcharts.min.js',
         'resources/views/livewire/admin/assets/libs/jsvectormap/dist/js/jsvectormap.min.js',
         'resources/views/livewire/admin/assets/libs/jsvectormap/dist/maps/world.js',
