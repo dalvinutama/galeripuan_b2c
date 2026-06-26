@@ -66,6 +66,11 @@ fi
 echo "==> Creating storage symlink..."
 php artisan storage:link --force 2>/dev/null
 
+# Fix permissions for volume mounts
+echo "==> Fixing storage permissions..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+
 # Optimize cache
 echo "==> Optimizing..."
 php artisan optimize:clear
