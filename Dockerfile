@@ -42,6 +42,9 @@ WORKDIR /var/www/html
 # Salin file proyek
 COPY . .
 
+# Backup storage bawaan untuk menyalin gambar awal ke dalam volume persisten nantinya
+RUN cp -r /var/www/html/storage /var/www/html/storage_backup
+
 # Instal dependensi PHP (abaikan platform reqs jika ada konflik lokal)
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 

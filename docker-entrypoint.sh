@@ -71,6 +71,11 @@ mkdir -p /var/www/html/storage/framework/cache/data
 mkdir -p /var/www/html/storage/logs
 mkdir -p /var/www/html/bootstrap/cache
 
+# Sinkronisasi gambar default (dari repositori) ke volume persisten jika belum ada
+echo "==> Syncing default images to persistent storage..."
+cp -rn /var/www/html/storage_backup/app/public/* /var/www/html/storage/app/public/ 2>/dev/null || true
+cp -rn /var/www/html/storage_backup/framework/sessions/* /var/www/html/storage/framework/sessions/ 2>/dev/null || true
+
 # Fix permissions SETELAH direktori dibuat (kritis untuk session file)
 echo "==> Fixing storage permissions..."
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
