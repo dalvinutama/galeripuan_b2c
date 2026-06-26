@@ -62,14 +62,23 @@ if [ "${CACHE_DRIVER}" = "database" ]; then
     php artisan migrate --force
 fi
 
+# Pastikan semua subdirektori storage yang dibutuhkan ada (kritis untuk volume Docker yang kosong)
+echo "==> Ensuring storage subdirectories exist..."
+mkdir -p /var/www/html/storage/app/public
+mkdir -p /var/www/html/storage/framework/sessions
+mkdir -p /var/www/html/storage/framework/views
+mkdir -p /var/www/html/storage/framework/cache/data
+mkdir -p /var/www/html/storage/logs
+mkdir -p /var/www/html/bootstrap/cache
+
+# Fix permissions SETELAH direktori dibuat (kritis untuk session file)
+echo "==> Fixing storage permissions..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Storage symlink
 echo "==> Creating storage symlink..."
 php artisan storage:link --force 2>/dev/null
-
-# Fix permissions for volume mounts
-echo "==> Fixing storage permissions..."
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
 
 # Optimize cache
 echo "==> Optimizing..."
