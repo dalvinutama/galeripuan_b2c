@@ -26,9 +26,23 @@ sleep 2
 echo "==> Creating storage symlink..."
 php artisan storage:link --force 2>/dev/null || true
 
+# Buat migration tabel sessions jika belum ada
+echo "==> Ensuring sessions table migration exists..."
+php artisan session:table 2>/dev/null || true
+
 # Jalankan migrasi
 echo "==> Running migrations..."
 php artisan migrate --force
+
+# Seed data awal jika database masih kosong (tidak ada admin)
+echo "==> Checking if initial seeding is needed..."
+ADMIN_COUNT=$(php artisan tinker --execute="echo \App\Models\Admin::count();" 2>/dev/null | tail -1 | tr -d '[:space:]')
+if [ "$ADMIN_COUNT" = "0" ] || [ -z "$ADMIN_COUNT" ]; then
+    echo "==> No admin found, running database seeder..."
+    php artisan db:seed --force
+else
+    echo "==> Admin exists (${ADMIN_COUNT}), skipping seeder."
+fi
 
 # Optimize cache
 echo "==> Caching config, routes, and views..."
