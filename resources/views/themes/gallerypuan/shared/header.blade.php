@@ -220,6 +220,53 @@
         margin: 0 !important;
         padding: 0 !important;
     }
+    
+    /* -- MOBILE OFFCANVAS NAVBAR -- */
+    @media (max-width: 991px) {
+        .mobile-offcanvas {
+            background-color: #FFFDFB !important;
+            max-width: 320px !important;
+            border-left: 1px solid #E8E2D9 !important;
+        }
+        .mobile-offcanvas .navbar-nav {
+            text-align: left !important;
+            align-items: flex-start !important;
+            flex-direction: column !important;
+            width: 100%;
+        }
+        .mobile-offcanvas .nav-item {
+            width: 100%;
+            border-bottom: 1px solid #E8E2D9;
+        }
+        .mobile-offcanvas .nav-item:last-child {
+            border-bottom: none;
+        }
+        .mobile-offcanvas .nav-link {
+            padding: 12px 0 !important;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .mobile-offcanvas .mega-dropdown .bx-chevron-down {
+            margin-left: auto;
+        }
+        .mobile-icon-text {
+            display: inline-block !important;
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4A3F35;
+        }
+        .mobile-offcanvas .ms-auto {
+            margin-top: 10px !important;
+            padding-top: 10px !important;
+        }
+        .search-bar-inline {
+            width: 100% !important;
+        }
+    }
+    .mobile-icon-text { display: none; } /* Tersembunyi di desktop */
+
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 </style>
 
@@ -233,13 +280,39 @@
             <img src="{{ Str::startsWith($siteLogo, 'http') ? $siteLogo : asset($siteLogo) }}" alt="Logo Gallery Puan" style="width: 55px; height: 55px; object-fit: cover; border-radius: 50%;">
         </a>
         
-        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarNav">
+            <i class="bx bx-menu" style="font-size: 28px; color: #4A3F35;"></i>
         </button>
         
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto text-center gap-lg-4 mt-3 mt-lg-0" style="font-size: 14px; font-weight: 500; font-family: 'Poppins', sans-serif;">
-                <li class="nav-item"><a class="nav-link main-nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">Beranda</a></li>
+        <div class="offcanvas-lg offcanvas-end mobile-offcanvas" tabindex="-1" id="navbarNav" aria-labelledby="navbarNavLabel">
+            <div class="offcanvas-header border-bottom" style="background-color: #FAF8F5;">
+                <h5 class="offcanvas-title d-flex align-items-center gap-2" id="navbarNavLabel" style="font-family: 'Playfair Display', serif; color: #2C1E16; font-weight: 700; font-size: 16px;">
+                    <img src="{{ Str::startsWith($siteLogo, 'http') ? $siteLogo : asset($siteLogo) }}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                    Menu Utama
+                </h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" data-bs-target="#navbarNav" aria-label="Close"></button>
+            </div>
+            
+            <div class="offcanvas-body p-4 p-lg-0">
+                <!-- Mobile Search Bar (Only shown on mobile) -->
+                <div class="d-lg-none w-100 mb-3 border-bottom pb-3">
+                    <h6 class="text-muted fw-bold mb-2 mt-2" style="font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Pencarian</h6>
+                    <form action="{{ route('products.index') }}" method="GET" class="position-relative m-0">
+                        <input type="text" 
+                                name="q" 
+                                value="{{ request('q') }}" 
+                                class="form-control shadow-none search-bar-inline" 
+                                placeholder="Cari hijab favorit kamu" 
+                                autocomplete="off"
+                                oninput="if(this.value === '') window.location.href='{{ route('products.index') }}';">
+                        <button type="submit" class="search-btn-inline">
+                            <i class="bx bx-search fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <ul class="navbar-nav mx-auto text-center gap-lg-4 mt-3 mt-lg-0" style="font-size: 14px; font-weight: 500; font-family: 'Poppins', sans-serif;">
+                    <li class="nav-item"><a class="nav-link main-nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">Beranda</a></li>
                 @php
                     // Memanggil data kategori
                     $mainCategories = \Modules\Shop\Entities\Category::orderBy('name', 'asc')->get();
@@ -308,7 +381,8 @@
             
            <ul class="navbar-nav ms-auto mt-3 mt-lg-0 flex-row justify-content-center gap-4 align-items-center"> 
                 
-                <li class="nav-item me-lg-3">
+                <!-- Desktop Search Bar -->
+                <li class="nav-item me-lg-3 d-none d-lg-block">
                     <form action="{{ route('products.index') }}" method="GET" class="position-relative m-0">
                         <input type="text" 
                                 name="q" 
@@ -339,21 +413,27 @@
                 
                 <li class="nav-item position-relative">
                     <a class="nav-link nav-icon-link" href="{{ route('wishlist.standalone') }}">
-                        <i class="bx bx-heart fs-4"></i>
-                        @if($wishlistCount > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="font-size: 0.6rem; background-color: #C5A059;">{{ $wishlistCount }}</span>
-                        @endif
+                        <div class="position-relative d-inline-block">
+                            <i class="bx bx-heart fs-4"></i>
+                            @if($wishlistCount > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="font-size: 0.6rem; background-color: #C5A059;">{{ $wishlistCount }}</span>
+                            @endif
+                        </div>
+                        <span class="mobile-icon-text">Daftar Keinginan</span>
                     </a>
                 </li>
 
                 <li class="nav-item dropdown position-relative">
                     <a class="nav-link nav-icon-link" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bx bx-bell fs-4"></i>
-                        @if($unreadNotifCount > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill notif-badge border border-white" style="font-size: 0.6rem; background-color: #C5A059;">
-                                {{ $unreadNotifCount }}
-                            </span>
-                        @endif
+                        <div class="position-relative d-inline-block">
+                            <i class="bx bx-bell fs-4"></i>
+                            @if($unreadNotifCount > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill notif-badge border border-white" style="font-size: 0.6rem; background-color: #C5A059;">
+                                    {{ $unreadNotifCount }}
+                                </span>
+                            @endif
+                        </div>
+                        <span class="mobile-icon-text">Notifikasi</span>
                     </a>
                     
                     <ul class="dropdown-menu dropdown-menu-end custom-dropdown bg-white p-0" aria-labelledby="notifDropdown" style="width: 340px; border: 1px solid #E8E2D9; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;">
@@ -392,10 +472,13 @@
                 
                 <li class="nav-item position-relative me-lg-3">
                     <a class="nav-link nav-icon-link" href="{{ route('carts.index') }}">
-                        <i class="bx bx-shopping-bag fs-4"></i>
-                        @if($cartCount > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="font-size: 0.6rem; background-color: #C5A059;">{{ $cartCount }}</span>
-                        @endif
+                        <div class="position-relative d-inline-block">
+                            <i class="bx bx-shopping-bag fs-4"></i>
+                            @if($cartCount > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="font-size: 0.6rem; background-color: #C5A059;">{{ $cartCount }}</span>
+                            @endif
+                        </div>
+                        <span class="mobile-icon-text">Keranjang Belanja</span>
                     </a>
                 </li>
                 
@@ -403,6 +486,7 @@
                     <a class="nav-link d-flex align-items-center gap-2 nav-icon-link" href="#" id="navbarUser" data-bs-toggle="dropdown">
                         <span class="d-none d-md-block fw-semibold" style="font-size: 14px; letter-spacing: 0.5px;">{{ Auth::user()->name }}</span>
                         <i class="bx bx-user-circle fs-3"></i>
+                        <span class="mobile-icon-text">{{ Auth::user()->name }}</span>
                     </a>
                     
                     <ul class="dropdown-menu dropdown-menu-end custom-dropdown bg-white">
@@ -421,10 +505,16 @@
                 </li>
 
                 @else
-                <li class="nav-item"><a class="nav-link nav-icon-link" href="{{ route('login') }}"><i class="bx bx-shopping-bag fs-4"></i></a></li>
-                <li class="nav-item ms-lg-3"><a class="btn btn-outline-dark rounded-pill px-4" href="{{ route('login') }}" style="font-size: 14px; font-weight: 500;">Masuk</a></li>
+                <li class="nav-item">
+                    <a class="nav-link nav-icon-link" href="{{ route('login') }}">
+                        <i class="bx bx-shopping-bag fs-4"></i>
+                        <span class="mobile-icon-text">Masuk / Daftar</span>
+                    </a>
+                </li>
+                <li class="nav-item ms-lg-3 d-none d-lg-block"><a class="btn btn-outline-dark rounded-pill px-4" href="{{ route('login') }}" style="font-size: 14px; font-weight: 500;">Masuk</a></li>
                 @endauth
             </ul>
+            </div>
         </div>
     </div>
 </nav>

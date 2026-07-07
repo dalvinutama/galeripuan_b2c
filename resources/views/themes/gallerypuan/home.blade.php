@@ -119,6 +119,33 @@
         transform: translateY(-2px); 
     }
 
+    @media (max-width: 768px) {
+        .hero-content {
+            width: 100%;
+            padding: 0 5%;
+            text-align: center;
+        }
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        .btn-aesthetic-solid, .btn-aesthetic-outline {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .btn-aesthetic-outline { margin-left: 0; }
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(92, 77, 74, 0.4) 0%, rgba(92, 77, 74, 0.8) 100%);
+        }
+        .section-white .col-md-6.p-5 {
+            padding: 30px 20px !important;
+        }
+        .section-white .col-md-6.p-0 {
+            height: 300px !important;
+        }
+    }
+
     /* PRODUCT CAROUSEL */
     .slider-container {
         position: relative;

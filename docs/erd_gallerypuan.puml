@@ -1,0 +1,229 @@
+@startuml
+scale 1.5
+hide circle
+hide methods
+skinparam linetype ortho
+skinparam shadowing false
+skinparam nodesep 80
+skinparam ranksep 100
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+    FontColor Black
+    FontSize 14
+    FontStyle bold
+    AttributeFontSize 13
+    AttributeFontStyle bold
+    Padding 10
+    MinimumWidth 220
+}
+
+entity "User" as user {
+  + id [PK] : UUID
+  --
+  name : String
+  email : String
+  password : String
+}
+
+entity "Admin" as admin {
+  + id [PK] : BigInt
+  --
+  name : String
+  email : String
+}
+
+entity "Address" as address {
+  + id [PK] : UUID
+  --
+  # user_id [FK] : UUID
+  is_primary : Boolean
+  first_name : String
+  last_name : String
+  phone : String
+  city : String
+  province : String
+  postcode : Integer
+}
+
+entity "Category" as category {
+  + id [PK] : UUID
+  --
+  # parent_id [FK] : UUID
+  slug : String
+  name : String
+}
+
+entity "Product" as product {
+  + id [PK] : UUID
+  --
+  # parent_id [FK] : UUID
+  sku : String
+  name : String
+  slug : String
+  price : Decimal
+  sale_price : Decimal
+  status : String
+  stock_status : String
+}
+
+entity "ProductImage" as product_image {
+  + id [PK] : UUID
+  --
+  # product_id [FK] : UUID
+  name : String
+}
+
+entity "CategoryProduct" as cat_prod {
+  # product_id [FK] : UUID
+  # category_id [FK] : UUID
+}
+
+entity "ProductInventory" as inventory {
+  + id [PK] : UUID
+  --
+  # product_id [FK] : UUID
+  qty : Integer
+  low_stock_threshold : Integer
+}
+
+entity "Voucher" as voucher {
+  + id [PK] : UUID
+  --
+  code : String
+  type : String
+  value : Decimal
+  min_total : Decimal
+  is_active : Boolean
+}
+
+entity "Cart" as cart {
+  + id [PK] : UUID
+  --
+  # user_id [FK] : UUID
+  ~ voucher_code [FK] : String
+  grand_total : Decimal
+  expired_at : Timestamp
+}
+
+entity "CartItem" as cart_item {
+  + id [PK] : UUID
+  --
+  # cart_id [FK] : UUID
+  # product_id [FK] : UUID
+  qty : Integer
+}
+
+entity "Order" as order {
+  + id [PK] : UUID
+  --
+  # user_id [FK] : UUID
+  ~ voucher_code [FK] : String
+  code : String
+  status : String
+  grand_total : Decimal
+  order_date : Timestamp
+}
+
+entity "OrderItem" as order_item {
+  + id [PK] : UUID
+  --
+  # order_id [FK] : UUID
+  # product_id [FK] : UUID
+  qty : Integer
+  sub_total : Decimal
+}
+
+entity "Payment" as payment {
+  + id [PK] : UUID
+  --
+  # order_id [FK] : UUID
+  # user_id [FK] : UUID
+  payment_type : String
+  status : String
+  amount : Decimal
+}
+
+entity "ReturnClaim" as return_claim {
+  + id [PK] : UUID
+  --
+  # order_id [FK] : UUID
+  # user_id [FK] : UUID
+  # approved_by [FK] : BigInt
+  status : String
+  reason : Text
+}
+
+entity "Review" as review {
+  + id [PK] : BigInt
+  --
+  # user_id [FK] : UUID
+  # product_id [FK] : UUID
+  # order_id [FK] : UUID
+  rating : Integer
+  comment : Text
+}
+
+entity "Wishlist" as wishlist {
+  + id [PK] : BigInt
+  --
+  # user_id [FK] : UUID
+  # product_id [FK] : UUID
+}
+
+entity "Setting" as setting {
+  + id [PK] : BigInt
+  --
+  key : String
+  value : Text
+  type : String
+}
+
+entity "SettingImage" as setting_image {
+  + id [PK] : BigInt
+  --
+  ~ setting_key [FK] : String
+  image_path : String
+}
+
+' ==========================================
+' RELASI (Crow Foot Notation)
+' ==========================================
+
+user ||--o{ address
+user ||--o{ order
+user ||--o{ payment
+user ||--o| cart
+user ||--o{ review
+user ||--o{ wishlist
+user ||--o{ return_claim
+
+admin ||--o{ return_claim
+
+category |o--o{ category
+product |o--o{ product
+
+category ||--o{ cat_prod
+product ||--o{ cat_prod
+
+product ||--|| inventory
+product ||--o{ product_image
+product ||--o{ cart_item
+product ||--o{ order_item
+product ||--o{ review
+product ||--o{ wishlist
+
+cart ||--o{ cart_item
+
+order ||--o{ order_item
+order ||--|| payment
+order ||--o| return_claim
+order ||--o{ review
+
+voucher |o--o{ order
+voucher |o--o{ cart
+
+setting ||--o{ setting_image
+
+@enduml

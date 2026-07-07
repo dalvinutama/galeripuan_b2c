@@ -29,18 +29,18 @@
 
 <footer class="aesthetic-footer mt-auto">
     <div class="container">
-        <div class="row">
+        <div class="row text-center text-lg-start">
             <div class="col-lg-4 mb-4">
-                <a class="d-flex align-items-center mb-3 text-decoration-none" href="{{ url('/') }}">
+                <a class="d-flex align-items-center justify-content-center justify-content-lg-start mb-3 text-decoration-none" href="{{ url('/') }}">
                     @php
                         $siteLogo = \App\Models\Setting::getValue('site_logo', 'themes/gallerypuan/assets/img/logo.jpg');
                     @endphp
                     <img src="{{ Str::startsWith($siteLogo, 'http') ? $siteLogo : asset($siteLogo) }}" alt="Logo" style="height: 50px; width: auto; object-fit: contain; margin-right: 15px; border-radius: 50%;">
                 </a>
-                <p style="color: #8C7A6B; font-size: 14px; line-height: 1.6; padding-right: 20px;">
+                <p style="color: #8C7A6B; font-size: 14px; line-height: 1.6; padding-right: 0;" class="pe-lg-4">
                     Gallery Puan adalah destinasi utama untuk hijab premium dan busana muslimah elegan dengan nuansa warna pastel yang menenangkan.
                 </p>
-                <div class="d-flex gap-3 mt-4">
+                <div class="d-flex gap-3 mt-4 justify-content-center justify-content-lg-start">
                     <a href="#" style="color: #4A3F35;"><i class="bx bxl-instagram fs-4"></i></a>
                     <a href="#" style="color: #4A3F35;"><i class="bx bxl-tiktok fs-4"></i></a>
                     <a href="#" style="color: #4A3F35;"><i class="bx bxl-whatsapp fs-4"></i></a>

@@ -67,6 +67,13 @@
         aside {
             margin-bottom: 20px !important;
         }
+        .products-header-row {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+        .products-header-row .text-muted {
+            margin-bottom: 15px;
+        }
     }
 </style>
 
@@ -90,7 +97,7 @@
                 <div class="section-header d-flex justify-content-between align-items-center pb-2 mb-4" style="border-bottom: 4px solid #1A110D !important;">
                     <h2 class="mb-0 font-serif text-uppercase" style="color: #1A110D; font-size: 32px; font-weight: 900; letter-spacing: 2px;">Koleksi Kami</h2>
                 </div>
-                <div class="row mb-4 align-items-center">
+                <div class="row mb-4 align-items-center products-header-row">
                     <div class="col-md-6 mb-3 mb-md-0">
                         <div class="text-muted" style="font-size: 14px; letter-spacing: 0.5px;">
                             Menampilkan <span style="font-weight: 600; color: #C5A059;">{{ $products->count() }}</span> produk

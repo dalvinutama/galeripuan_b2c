@@ -125,13 +125,13 @@
                         {{ html()->form('post', route('carts.store'))->class('add-to-cart-form')->id('form-add-to-cart')->open() }}
                         <input type="hidden" name="product_id" id="input-product-id" value="{{ strtoupper($product->type) == 'CONFIGURABLE' ? '' : $product->id }}"/>
                         <div class="row">
-                            <div class="col-md-2 col-2">
+                            <div class="col-md-2 col-3">
                                 <input type="number" name="qty" value="1" class="form-control text-center text-luxury-brown" min="1" style="border-color: #E8E2D9;" />
                             </div>
-                            <div class="col-xxl-4 col-lg-4 col-md-5 col-5 d-grid">
-                                <button type="button" id="btn-submit-cart" class="btn btn-cart-luxury"><i class="bx bx-cart-alt"></i> Tambah</button>
+                            <div class="col-xxl-4 col-lg-4 col-md-5 col-6 d-grid px-1">
+                                <button type="button" id="btn-submit-cart" class="btn btn-cart-luxury" style="font-size: 14px;"><i class="bx bx-cart-alt"></i> Tambah</button>
                             </div>
-                            <div class="col-md-4 col-4">
+                            <div class="col-md-4 col-3">
                                 @php
                                     $isWishlisted = false;
                                     if(auth()->check()) {
