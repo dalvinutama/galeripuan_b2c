@@ -264,6 +264,79 @@
         .search-bar-inline {
             width: 100% !important;
         }
+        .mobile-icon-text { display: none; } /* Tersembunyi di desktop */
+
+        /* Quick-access icons di navbar bar atas (mobile only) */
+        .mobile-quick-icons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            margin-right: 8px;
+        }
+        .mobile-quick-icons a {
+            position: relative;
+            color: #4A3F35;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 4px;
+        }
+        .mobile-quick-icons .badge-dot {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            min-width: 16px;
+            height: 16px;
+            font-size: 9px;
+            background-color: #C5A059;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            padding: 0 3px;
+            border: 1.5px solid white;
+        }
+        /* Search bar di tengah navbar mobile */
+        .mobile-search-bar {
+            flex: 1;
+            margin: 0 10px;
+        }
+        .mobile-search-bar form {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .mobile-search-bar input {
+            width: 100%;
+            border: 1.5px solid #E8E2D9;
+            border-radius: 50px;
+            padding: 7px 36px 7px 14px;
+            font-size: 13px;
+            background-color: #F9F6F0;
+            color: #4A3F35;
+            outline: none;
+            box-shadow: none;
+        }
+        .mobile-search-bar input:focus {
+            border-color: #C5A059;
+            background-color: #fff;
+        }
+        .mobile-search-bar button {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #4A3F35;
+            font-size: 17px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
     }
     .mobile-icon-text { display: none; } /* Tersembunyi di desktop */
 
@@ -280,6 +353,55 @@
             <img src="{{ Str::startsWith($siteLogo, 'http') ? $siteLogo : asset($siteLogo) }}" alt="Logo Gallery Puan" style="width: 55px; height: 55px; object-fit: cover; border-radius: 50%;">
         </a>
         
+        {{-- Ikon Pintas Mobile (hanya tampil di layar kecil) --}}
+        @php
+            $cart_mb = \Illuminate\Support\Facades\DB::table('shop_carts')->where('user_id', auth()->id() ?? 0)->first();
+            $cartCount_mb = $cart_mb ? \Illuminate\Support\Facades\DB::table('shop_cart_items')->where('cart_id', $cart_mb->id)->count() : 0;
+            $wishlistCount_mb = auth()->check() ? \Modules\Shop\Entities\Wishlist::where('user_id', auth()->id())->count() : 0;
+        @endphp
+        {{-- Search Bar Tengah (mobile only) --}}
+        <div class="mobile-search-bar d-lg-none">
+            <form action="{{ route('products.index') }}" method="GET">
+                <input type="text"
+                       name="q"
+                       value="{{ request('q') }}"
+                       placeholder="Cari produk..."
+                       autocomplete="off">
+                <button type="submit"><i class="bx bx-search"></i></button>
+            </form>
+        </div>
+
+        <div class="mobile-quick-icons d-lg-none">
+            @auth
+            {{-- Ikon Notifikasi --}}
+            @php
+                $unreadNotifCount_mb = auth()->user()->unreadNotifications->count();
+            @endphp
+            <a href="#" title="Notifikasi" data-bs-toggle="dropdown" id="notifMobileBtn">
+                <i class="bx bx-bell"></i>
+                @if($unreadNotifCount_mb > 0)
+                    <span class="badge-dot">{{ $unreadNotifCount_mb }}</span>
+                @endif
+            </a>
+            @endauth
+            @auth
+            {{-- Ikon Wishlist --}}
+            <a href="{{ route('wishlist.standalone') }}" title="Daftar Keinginan">
+                <i class="bx bx-heart"></i>
+                @if($wishlistCount_mb > 0)
+                    <span class="badge-dot">{{ $wishlistCount_mb }}</span>
+                @endif
+            </a>
+            {{-- Ikon Keranjang --}}
+            <a href="{{ route('carts.index') }}" title="Keranjang Belanja">
+                <i class="bx bx-shopping-bag"></i>
+                @if($cartCount_mb > 0)
+                    <span class="badge-dot">{{ $cartCount_mb }}</span>
+                @endif
+            </a>
+            @endauth
+        </div>
+
         <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarNav">
             <i class="bx bx-menu" style="font-size: 28px; color: #4A3F35;"></i>
         </button>

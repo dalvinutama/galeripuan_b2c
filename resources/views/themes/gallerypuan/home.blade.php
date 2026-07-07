@@ -123,26 +123,55 @@
         .hero-content {
             width: 100%;
             padding: 0 5%;
-            text-align: center;
+            text-align: left;
         }
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
         }
-        .btn-aesthetic-solid, .btn-aesthetic-outline {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            text-align: center;
+        .hero-subtitle {
+            font-size: 1rem;
+            max-width: 100%;
+            margin-bottom: 1.8rem;
         }
-        .btn-aesthetic-outline { margin-left: 0; }
+        .btn-aesthetic-solid {
+            display: inline-block;
+            width: auto;
+            padding: 10px 26px;
+            font-size: 12px;
+            margin: 0;
+        }
+        .btn-aesthetic-outline {
+            display: inline-block;
+            width: auto;
+            padding: 10px 26px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
         .hero-gradient {
-            background: linear-gradient(180deg, rgba(92, 77, 74, 0.4) 0%, rgba(92, 77, 74, 0.8) 100%);
+            background: linear-gradient(180deg, rgba(92, 77, 74, 0.4) 0%, rgba(92, 77, 74, 0.75) 100%);
         }
         .section-white .col-md-6.p-5 {
-            padding: 30px 20px !important;
+            padding: 28px 20px !important;
+            text-align: left !important;
         }
         .section-white .col-md-6.p-0 {
-            height: 300px !important;
+            height: 240px !important;
+        }
+        /* Promo section mobile */
+        .promo-text-col {
+            padding: 28px 20px !important;
+            text-align: left !important;
+        }
+        .promo-text-col h2 {
+            font-size: 26px !important;
+        }
+        .promo-text-col p {
+            font-size: 14px !important;
+            margin-bottom: 1.4rem !important;
+        }
+        .promo-text-col .btn-aesthetic-solid {
+            padding: 10px 24px;
+            font-size: 12px;
         }
     }
 
@@ -484,7 +513,7 @@
 <section class="section-white">
     <div class="container reveal-up">
         <div class="row align-items-center" style="background-color: #F9F6F0; border-radius: 12px; overflow: hidden; box-shadow: 0 15px 40px rgba(92, 77, 74, 0.08);">
-            <div class="col-md-6 p-5 px-lg-5 py-lg-0 text-center text-md-start" style="padding: 60px !important;">
+            <div class="col-md-6 p-5 px-lg-5 py-lg-0 text-md-start promo-text-col" style="padding: 60px !important;">
                 <span class="badge mb-4" style="background-color: #D1A7A0; font-weight: 500; padding: 8px 20px; letter-spacing: 1.5px; text-transform: uppercase; font-size: 11px;">{{ \App\Models\Setting::getValue('home_promo_badge', 'Promo Terbatas') }}</span>
                 <h2 class="font-serif fw-bold mb-3" style="font-size: 40px; color: #5C4D4A; line-height: 1.2;">{{ \App\Models\Setting::getValue('home_promo_title', 'Exclusive Bundle Raya') }}</h2>
                 <p class="mb-5" style="color: #A3918E; font-size: 16px; line-height: 1.8; font-weight: 300;">{{ \App\Models\Setting::getValue('home_promo_subtitle', 'Dapatkan harga spesial untuk pembelian paket bundle hijab pastel series. Pilihan sempurna untuk hadiah orang terkasih atau melengkapi koleksi harian Anda.') }}</p>
