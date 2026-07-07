@@ -21,7 +21,7 @@
             <ol class="breadcrumb mb-0" style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
                 <li class="breadcrumb-item"><a href="{{ ('/') }}" style="color: #5D4B46; text-decoration: none;">Beranda</a></li>
                 <li class="breadcrumb-item"><a href="{{ url('products') }}" style="color: #5D4B46; text-decoration: none;">Produk</a></li>
-                <li class="breadcrumb-item active text-luxury-brown" aria-current="page" style="font-weight: 600; color: #2C1E16 !important;">{{ $product->name }}</li>
+                <li class="breadcrumb-item active text-luxury-brown d-none d-md-inline-block" aria-current="page" style="font-weight: 600; color: #2C1E16 !important;">{{ $product->name }}</li>
             </ol>
         </nav>
     </div>

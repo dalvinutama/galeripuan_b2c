@@ -282,7 +282,7 @@
 
             <div class="row g-4">
                 <div class="col-lg-7 col-12">
-                    <form method="POST" action="{{ route('orders.store') }}">
+                    <form method="POST" action="{{ route('orders.store') }}" id="checkout-form">
                         @csrf
                         
                         @if ($errors->any())
@@ -388,11 +388,12 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-4">
-                            <a href="{{ route('carts.index') }}" class="btn btn-luxury-outline order-2 order-sm-1 w-100 w-sm-auto">
+                        <!-- Desktop Action Buttons (Hidden on Mobile) -->
+                        <div class="d-none d-lg-flex justify-content-between align-items-center gap-3 mt-4">
+                            <a href="{{ route('carts.index') }}" class="btn btn-luxury-outline w-auto">
                                 <i class='bx bx-arrow-back me-1'></i> Kembali ke Keranjang
                             </a>
-                            <button type="submit" class="btn btn-luxury-primary order-1 order-sm-2 w-100 w-sm-auto px-5">
+                            <button type="submit" class="btn btn-luxury-primary w-auto px-5">
                                 <i class='bx bx-credit-card me-1'></i> Konfirmasi & Buat Pesanan
                             </button>
                         </div>
@@ -495,6 +496,16 @@
                                 <div class="text-luxury fw-bold">Total Pembayaran</div>
                                 <div class="text-luxury fw-bold fs-4" id="grand-total" style="font-family: 'Playfair Display', serif; color: #4A3F35;">Rp {{ $cart->grand_total_label }}</div>
                             </div>
+                        </div>
+                        
+                        <!-- Mobile Action Buttons (Hidden on Desktop, Positioned at the very bottom on Mobile) -->
+                        <div class="d-flex d-lg-none flex-column gap-3 mt-4">
+                            <button type="submit" form="checkout-form" class="btn btn-luxury-primary w-100 py-3 fs-6">
+                                <i class='bx bx-credit-card me-1'></i> Konfirmasi & Buat Pesanan
+                            </button>
+                            <a href="{{ route('carts.index') }}" class="btn btn-luxury-outline w-100 py-2 fs-6">
+                                <i class='bx bx-arrow-back me-1'></i> Kembali ke Keranjang
+                            </a>
                         </div>
                     </div>
                 </div>

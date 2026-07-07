@@ -121,14 +121,6 @@ class ProductController extends Controller
     protected function getPriceRangeFilter(Request $request)
     {
         if (!$request->has('price') || empty($request->get('price'))) {
-            // Apply Dynamic Personalization if logged in
-            if (\Illuminate\Support\Facades\Auth::check()) {
-                $budget = \Illuminate\Support\Facades\Auth::user()->getHistoricalBudgetRange();
-                if ($budget) {
-                    $this->data['isDynamicFilterApplied'] = true;
-                    return $budget;
-                }
-            }
             return $this->defaultPriceRange;
         }
 

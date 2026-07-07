@@ -176,11 +176,7 @@
             <h5>Kisaran Harga</h5>
         </div>
         <div class="widget-content shop-by-price">
-            @if(isset($isDynamicFilterApplied) && $isDynamicFilterApplied)
-                <div class="alert alert-info py-2 px-3 mb-3" style="font-size: 12px; background-color: #F4ECE1; border-color: #E8E2D9; color: #A3736C;">
-                    <i class="bx bx-info-circle me-1"></i> Rentang harga disesuaikan dengan histori belanja Anda.
-                </div>
-            @endif
+
             <form method="GET" action="{{ url()->current() }}">
                 <div class="price-filter">
                     <div class="price-filter-inner">

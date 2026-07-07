@@ -90,28 +90,76 @@
 <section class="main-content">
     <div class="container">
         <div class="row">
+            <!-- Mobile Header (Hidden on Desktop) -->
+            <div class="d-md-none mb-4">
+                <h2 class="mb-3 font-serif text-uppercase" style="color: #1A110D; font-size: 26px; font-weight: 900; letter-spacing: 1px;">Koleksi Produk</h2>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    
+                    <!-- Kategori Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle d-flex align-items-center shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600; color: #3E2723; font-size: 15px; background: transparent; border: none; padding: 0;">
+                            {{ isset($category) ? $category->name : 'Semua Kategori' }}
+                        </button>
+                        <ul class="dropdown-menu shadow-sm" style="border: 1px solid #E8E2D9; border-radius: 8px;">
+                            <li><a class="dropdown-item" href="{{ route('products.index') }}" onclick="window.location.href=this.href; return false;">Semua Kategori</a></li>
+                            @if(isset($categories) && $categories->count() > 0)
+                                @foreach($categories as $cat)
+                                    <li><a class="dropdown-item" href="{{ shop_category_link($cat) }}" onclick="window.location.href=this.href; return false;">{{ $cat->name }}</a></li>
+                                @endforeach
+                            @endif
+                        </ul>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Sort Icon (Mobile) -->
+                        <div class="dropdown">
+                            <button class="btn btn-sm d-flex align-items-center justify-content-center shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #F9F6F0; border: 1px solid #E8E2D9; color: #3E2723; padding: 6px 10px; border-radius: 6px;" title="Urutkan Produk">
+                                <i class='bx bx-sort' style="font-size: 18px;"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow-sm dropdown-menu-end" style="border: 1px solid #E8E2D9; border-radius: 8px;">
+                                <li><a class="dropdown-item" href="?sort=price&order=asc" style="font-size: 14px;">Harga: Rendah ke Tinggi</a></li>
+                                <li><a class="dropdown-item" href="?sort=price&order=desc" style="font-size: 14px;">Harga: Tinggi ke Rendah</a></li>
+                                <li><a class="dropdown-item" href="?sort=publish_date&order=desc" style="font-size: 14px;">Barang Terbaru</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Filter Button -->
+                        <button class="btn btn-sm d-flex align-items-center gap-1" style="background-color: #F9F6F0; border: 1px solid #E8E2D9; color: #3E2723; font-weight: 600; padding: 6px 12px; border-radius: 6px;" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+                            <i class='bx bx-filter-alt'></i> Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <aside class="col-lg-3 col-md-4 mb-6 mb-md-0">
-                @include('themes.gallerypuan.products.sidebar', ['categories' => $categories])
+                <!-- Wrapper Offcanvas (Aktif di Mobile, Normal di Desktop) -->
+                <div class="offcanvas-md offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+                    <div class="offcanvas-header d-md-none border-bottom" style="background-color: #FAF7F2;">
+                        <h5 class="offcanvas-title font-serif" id="sidebarOffcanvasLabel" style="font-weight: 700; color: #1A110D; font-size: 20px;">Filter & Kategori</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body flex-column p-3 p-md-0" style="background-color: #FFFDFB;">
+                        @include('themes.gallerypuan.products.sidebar', ['categories' => $categories])
+                    </div>
+                </div>
             </aside>
             <section class="col-lg-9 col-md-12 products">
-                <div class="section-header d-flex justify-content-between align-items-center pb-2 mb-4" style="border-bottom: 4px solid #1A110D !important;">
+                <div class="section-header d-none d-md-flex justify-content-between align-items-center pb-2 mb-4" style="border-bottom: 4px solid #1A110D !important;">
                     <h2 class="mb-0 font-serif text-uppercase" style="color: #1A110D; font-size: 32px; font-weight: 900; letter-spacing: 2px;">Koleksi Kami</h2>
                 </div>
                 <div class="row mb-4 align-items-center products-header-row">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <div class="text-muted" style="font-size: 14px; letter-spacing: 0.5px;">
-                            Menampilkan <span style="font-weight: 600; color: #C5A059;">{{ $products->count() }}</span> produk
+                    <div class="col-12 d-none d-md-flex justify-content-end">
+                        <div class="dropdown">
+                            <button class="btn btn-sm d-flex align-items-center justify-content-center shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #F9F6F0; border: 1px solid #E8E2D9; color: #3E2723; padding: 6px 10px; border-radius: 6px;" title="Urutkan Produk">
+                                <i class='bx bx-sort' style="font-size: 18px;"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow-sm dropdown-menu-end" style="border: 1px solid #E8E2D9; border-radius: 8px;">
+                                <li><a class="dropdown-item" href="?sort=price&order=asc" style="font-size: 14px;">Harga: Rendah ke Tinggi</a></li>
+                                <li><a class="dropdown-item" href="?sort=price&order=desc" style="font-size: 14px;">Harga: Tinggi ke Rendah</a></li>
+                                <li><a class="dropdown-item" href="?sort=publish_date&order=desc" style="font-size: 14px;">Barang Terbaru</a></li>
+                            </ul>
                         </div>
-                    </div>
-                    <div class="col-md-6 d-flex justify-content-md-end">
-                        <form method="GET" action="{{ url()->current() }}" class="d-inline-block w-100 w-md-auto">
-                            @if(request('price'))
-                                <input type="hidden" name="price" value="{{ request('price') }}">
-                            @endif
-                            <div class="d-flex justify-content-md-end w-100">
-                                {!! html()->select('sorting', $sortingOptions, $sortingQuery)->class(['custom-select-elegant', 'w-100'])->attribute('onchange', 'this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);') !!}   
-                            </div>
-                        </form>
                     </div>
                 </div>
                 <div class="row g-4">
