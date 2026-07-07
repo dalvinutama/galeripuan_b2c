@@ -159,24 +159,7 @@
                 </div>
             </div>
 
-            {{-- Kolom 2: Jelajahi --}}
-            <div class="col-lg-2 col-6">
-                <h6 class="footer-section-title">Jelajahi</h6>
-                <a href="{{ url('/') }}" class="footer-link">
-                    <i class="bx bx-home-alt"></i> Beranda
-                </a>
-                <a href="{{ url('/#kategori') }}" class="footer-link">
-                    <i class="bx bx-category"></i> Kategori Produk
-                </a>
-                <a href="{{ route('products.index') }}" class="footer-link">
-                    <i class="bx bx-purchase-tag-alt"></i> Koleksi Terbaru
-                </a>
-                <a href="{{ url('/tentang-kami') }}" class="footer-link">
-                    <i class="bx bx-info-circle"></i> Tentang Kami
-                </a>
-            </div>
-
-            {{-- Kolom 3: Hubungi Kami --}}
+            {{-- Kolom 2: Hubungi Kami --}}
             <div class="col-lg-6 col-6">
                 <h6 class="footer-section-title">Hubungi Kami</h6>
                 <div class="footer-contact-item">
@@ -195,6 +178,23 @@
                     <i class="bx bx-time"></i>
                     <span>Senin – Sabtu, 08.00 – 17.00 WIB</span>
                 </div>
+            </div>
+
+            {{-- Kolom 3: Jelajahi --}}
+            <div class="col-lg-2 col-6">
+                <h6 class="footer-section-title">Jelajahi</h6>
+                <a href="{{ url('/') }}" class="footer-link">
+                    <i class="bx bx-home-alt"></i> Beranda
+                </a>
+                <a href="{{ url('/#kategori') }}" class="footer-link">
+                    <i class="bx bx-category"></i> Kategori Produk
+                </a>
+                <a href="{{ route('products.index') }}" class="footer-link">
+                    <i class="bx bx-purchase-tag-alt"></i> Koleksi Terbaru
+                </a>
+                <a href="{{ url('/tentang-kami') }}" class="footer-link">
+                    <i class="bx bx-info-circle"></i> Tentang Kami
+                </a>
             </div>
 
         </div>
